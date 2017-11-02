@@ -23,4 +23,5 @@ setup(name='bruno_util',
       ],
       keywords='parameter scanning scientific search testing',
       url='https://github.com/brunobeltran/bruno_util',
+      install_requires=['pscan'], # include other packages I wrote that are useful
      )
