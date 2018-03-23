@@ -12,7 +12,7 @@ def file_to_words(filename):
             ])
     TR = string.maketrans(string.punctuation, ' ' * len(string.punctuation))
 
-    print multiprocessing.current_process().name, 'reading', filename
+    print(multiprocessing.current_process().name, 'reading', filename)
     output = []
 
     with open(filename, 'rt') as f:
