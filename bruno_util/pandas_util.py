@@ -9,6 +9,19 @@ def unique_vals_multiindex(df, col):
     """Get the "unique column values" in a multiindex "column"."""
     return df.index.levels[multiindex_col_ix(df, col)]
 
+def fill_in_row_value(row, updater, col=None):
+    """Function for apply'ing to rows (axis=1) that makes a new column by
+    taking the correct value from a series whose index names should correspond
+    to columns in the row. Optionally provide a default col to insert values
+    from the existing row, otherwise insert NaN if updater series doesn't
+    contain the desired key."""
+    cols = tuple(updater.index.names)
+    if col and ~pd.isnull(row[col]):
+        return row[col]
+    if row[cols] in updater:
+        return updater[row[cols]]
+    return np.nan
+
 def df_update_using_cols_like_keys(df1, df2, cols, ignore_index=True):
     """Add the rows in df1 whose values in cols do not appear in df2 to df2.
 
