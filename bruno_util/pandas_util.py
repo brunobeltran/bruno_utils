@@ -14,7 +14,15 @@ def fill_in_row_value(row, updater, col=None):
     taking the correct value from a series whose index names should correspond
     to columns in the row. Optionally provide a default col to insert values
     from the existing row, otherwise insert NaN if updater series doesn't
-    contain the desired key."""
+    contain the desired key.
+
+    Example
+    -------
+    TODO: make this example general
+    >>> mmt['meiosis_time_combined'] = mmt.apply(bruno_util.pandas_util.fill_in_row_value,
+    >>>         axis=1, updater=manual_meiosis_time, col='meiosis_time_guess')
+
+    """
     cols = tuple(updater.index.names)
     if col and ~pd.isnull(row[col]):
         return row[col]
