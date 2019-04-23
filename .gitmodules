@@ -1,3 +1,3 @@
 [submodule "bruno_util/mittag-leffler"]
-	path = bruno_util/mittag-leffler
+	path = bruno_util/mittag_leffler
 	url = git@github.com:brunobeltran/mittag-leffler.git
