@@ -1,6 +1,8 @@
 import os
 import struct
 import numpy as np
+# from .utils import well_behaved_decorator
+from functools import wraps
 
 def strong_default_seed(f):
     """Use os.random to correctly seed a np.random.RandomState-compatible
@@ -26,6 +28,7 @@ def strong_default_seed(f):
     and get different results for each invocation by letting this wrapper
     initiazlie the seed at each call site.
     """
+    @wraps(f)
     def wrapped_f(*args, **kwargs):
         if 'random_state' in kwargs and kwargs['random_state'] is not None:
             return f(*args, **kwargs)
@@ -48,8 +51,11 @@ def make_pool(rvs_f, pool_size=1024, unit_size=tuple(), **kwargs):
     size=unit_size repeatedly when usign numpy/scipy random generation
     functions.
 
-    kwargs are passed on to the rvs_f function when it is called to replenish
-    the pool.
+    .. warning::
+
+        `kwargs` are passed on to the `rvs_f` function when it is called to
+        replenish the pool. This means if `kwargs` is constantly changing, many
+        of its values will be ignored.
 
     Parameters
     ----------
