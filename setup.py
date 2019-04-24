@@ -7,12 +7,12 @@ def readme():
         return f.read()
 
 setup(name='bruno_util',
-      version='1.4.2',
+      version='1.4.4',
       description='Catch-all package for utilities useful to Bruno Beltran',
       long_description=readme(),
       author='Bruno Beltran',
       author_email='brunobeltran0@gmail.com',
-      packages=['bruno_util'],
+      packages=['bruno_util', 'bruno_util.mittag_leffler'],
       license='MIT',
       classifiers=[
           'Development Status :: 2 - Pre-Alpha',
