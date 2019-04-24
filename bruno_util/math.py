@@ -47,7 +47,7 @@ def locally_linear_fit(x, y, window_size=5, **kwargs):
 def Kf(r,alf,bet,z):
     res = (1/(np.pi*alf))*r**((1-bet)/alf)*np.exp(-r**(1/alf))
     res *= r*np.sin(np.pi*(1-bet))- z*np.sin(np.pi*(1-bet+alf))
-    res /= r**2 – 2*r*z*np.cos(np.pi*alf) + z**2
+    res /= r**2 - 2*r*z*np.cos(np.pi*alf) + z**2
     return res
 
 def P(phi,alf,bet,eps,z):
