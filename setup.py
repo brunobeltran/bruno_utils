@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 setup(name='bruno_util',
-      version='1.4.4',
+      version='1.4.5',
       description='Catch-all package for utilities useful to Bruno Beltran',
       long_description=readme(),
       author='Bruno Beltran',
@@ -23,5 +23,6 @@ setup(name='bruno_util',
       ],
       keywords='parameter scanning scientific search testing',
       url='https://github.com/brunobeltran/bruno_util',
-      install_requires=['pscan', 'multi_locus_analysis'], # include other packages I wrote that are useful
+      install_requires=['pandas', 'numpy', 'matplotlib', 'numba',
+          'pscan', 'multi_locus_analysis'], # include other packages I wrote that are useful
      )
