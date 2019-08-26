@@ -44,6 +44,32 @@ def locally_linear_fit(x, y, window_size=5, **kwargs):
         ax.plot(x, slope, **kwargs)
     return ax, slope
 
+def deriv(y, x=None, method='fourier'):
+    """Calculate the numerical derivative of data
+
+    Different than calculating a numerical derivative given a function (for
+    which scipy provides appropriate routines, this function assumes you are
+    given some data points :math:`(x, y)_i` that represent a function :math:`y
+    = f(x) + \xi` for some noise term :math:`xi`.
+
+    We will eventually provide multiple FFT-based derivatives, along with some
+    finite differences methods designed to be more resistant to noisy data.
+
+
+    Notes
+    -----
+    `method='fourier'` will correspond to first re-sampling the data onto a
+    grid via interpolation if necessary, then performing a FFT, multiplying by
+    :math:`2\pi{}ik`, then reversing the FFT.
+
+    Greengard and Lee
+    (https://math.nyu.edu/faculty/greengar/glee_nufft_sirev.pdf) provide
+    another way to evaluate the FFT on a non-uniform grid, but we use our
+    simpler method for now.
+    """
+    raise NotImplementedError("TODO")
+
+
 def Kf(r,alf,bet,z):
     res = (1/(np.pi*alf))*r**((1-bet)/alf)*np.exp(-r**(1/alf))
     res *= r*np.sin(np.pi*(1-bet))- z*np.sin(np.pi*(1-bet+alf))
@@ -58,6 +84,7 @@ def P(phi,alf,bet,eps,z):
     return res
 
 def mlf2(z,alf,bet,K=10):
+    """Mittag-Leffler"""
     e = 1/gamma(bet)
     for k in range(1,K):
         e += z**k/gamma(alf*k+bet)
