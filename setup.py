@@ -7,7 +7,7 @@ def readme():
         return f.read()
 
 setup(name='bruno_util',
-      version='1.4.7',
+      version='1.5.0',
       description='Catch-all package for utilities useful to Bruno Beltran',
       long_description=readme(),
       author='Bruno Beltran',
