@@ -1,0 +1,18 @@
+dist: xenial
+language: python
+python: 3.7.2
+install:
+- pip install -r requirements_dev.txt
+- pip install -e .
+script:
+- pytest
+deploy:
+  provider: pypi
+  user: bbeltr1
+  on:
+    tags: true
+    branch: master
+    repo: brunobeltran/bruno_util
+  skip_existing: true
+  password:
+    secure: nzeSb+POJq/jFqQ9ZEDN5IGPLq0WndS1H9l/zfCeJU1tIf5fbqxK9r292xm4pmzB/LK6DExcBRPDoGjXm77IWX0WXg0w93kewDUjFQsm80jUI3fOJ1AfDZQoZPK0qs/SBfLjLLNf202U8w3ReU0ngpAXH9puDd829xjTw3TlRYuCmsZbcQVw7oY24I6eP7GIYzSHb6RzGb4oW+EWi0eVGHK9pZ6y6T0IGTn2g5jO5L/wtpOh0cfdcnka/eXJYDrjMw0+SBapOnPtjfOXnG8bHW/MfNzqYSXiEB9oswSnqUuQvaTch3OPsIq3QyY53I9FIjm0QH7bjHLvzDFIRLbL/acubFmOGLxEmSueVCTxb9bVHxe/9tULDZc0qSYw675QBkCuvXo7ZDfBUe7WxRkxWkhEbbNLWucwTOJdxbCB5mYjvEKnfio23uExw4YiglxPEeLya3T2b8clQwTWVcgo9TpfbBvyZAVTTcNz9GRSsHCj0mVsAavW9WbNBoUixYMFBYajz+SYl1bmRjeJf5nWOcXBjHSUibmIE9uqCv7FiThkkIPKmHZhCEJCVQFAKPtVKtIRLesOIVWLfu5lqyz3jXvbHZg5vUPoKzJBnxmB3mVzQzgx1l2c/05hknT9luvmAs2j5V6x4CXupyOAs5J4a82x4YmuFl2rJg9Eg5YFmOA=
