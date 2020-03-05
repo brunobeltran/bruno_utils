@@ -47,3 +47,29 @@ the case.
 In order to work around this, we provide the function :func:`plot_colored_lines`
 that takes parameters `t`, `x`, `y`, and plots line :math:`(x(t), y(t))`,
 colored by :math:`t`.
+
+Publication Quality
+===================
+
+While there are many write ups online that try to walk you through how to make
+your plots publication quality in Matplotlib. However, I have yet to find one
+that let's you accomplish what (I think) should be the typical requirements for
+making a plot for publication:
+
+1) Entire figure (including annotations, etc.) must match the column width of
+the Journal
+2) Actual axes themselves should have consistent aspect ratio or height (either
+of which requires adjustment depending on how bulky the
+ticks/labels/annotations are)
+3) Font sizes requested should be reproduced exactly when the figure is placed
+in the paper itself
+
+Unfortunatley, Matplotlib does not make it easy to express these requirements,
+and you have to dig much farther into the internal representation of how plots
+are arranged than most users should ever have to in order to actually make it
+work.
+
+Let's walk through a typical, seemingly simple figure together.
+
+
+
