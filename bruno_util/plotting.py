@@ -3,8 +3,21 @@ import matplotlib as mpl
 from matplotlib.backends import backend_svg
 import matplotlib.pyplot as plt
 import seaborn as sns
-import numbers
+
 import io
+import numbers
+
+
+def print_bbox_from_arr(bbox):
+    print(f'Bbox(xmin={bbox[0, 0]}, xmax={bbox[1, 0]},\n'
+          f'     ymin={bbox[0, 1]}, ymax={bbox[1, 1]}')
+
+
+def print_extents_from_arr(bbox):
+    print(f'Bbox(xmin={bbox[0, 0]}, ymin={bbox[0, 1]},\n'
+          f'     width={bbox[1, 0] - bbox[0, 0]}, '
+          f'height={bbox[1, 1] - bbox[0, 1]})')
+
 
 def plot_colored_line(t, x, y, cmap='viridis', linewidth=3, ax=None,
                       colorbar=True):
@@ -12,7 +25,7 @@ def plot_colored_line(t, x, y, cmap='viridis', linewidth=3, ax=None,
     segments = np.concatenate([points[:-1], points[1:]], axis=1)
 
     lc = mpl.collections.LineCollection(segments, cmap=plt.get_cmap(cmap))
-    lc.set_array(t) # Collection is a ScalarMappable
+    lc.set_array(t)  # Collection is a ScalarMappable
     lc.set_linewidth(linewidth)
 
     if ax is None:
@@ -30,9 +43,10 @@ def plot_colored_line(t, x, y, cmap='viridis', linewidth=3, ax=None,
         # was before we did this
         cax = plt.gca()
         plt.sca(ax)
-        cbar = plt.colorbar(sm)
+        plt.colorbar(sm)
         plt.sca(cax)
     return ax
+
 
 def get_lim(x, margin=0.1):
     min = np.min(x)
@@ -67,8 +81,8 @@ def cmap_from_list(labels, palette=None, log=False, vmin=None, vmax=None):
         cmap = {labels[i]: pal[i] for i in range(n_labels)}
         return lambda l: cmap[l]
 
-def draw_triangle(alpha, x0, width, orientation, base=10,
-                            **kwargs):
+
+def draw_triangle(alpha, x0, width, orientation, base=10, **kwargs):
     """Draw a triangle showing the best-fit slope on a linear scale.
 
     Parameters
@@ -94,7 +108,7 @@ def draw_triangle(alpha, x0, width, orientation, base=10,
     y1 = y0 + alpha*(x1 - x0)
     plt.plot([x0, x1], [y0, y1], 'k')
     if (alpha >= 0 and orientation == 'up') \
-    or (alpha < 0 and orientation == 'down'):
+            or (alpha < 0 and orientation == 'down'):
         plt.plot([x0, x1], [y1, y1], 'k')
         plt.plot([x0, x0], [y0, y1], 'k')
         # plt.plot lines have nice rounded caps
@@ -102,19 +116,22 @@ def draw_triangle(alpha, x0, width, orientation, base=10,
         # plt.vlines(x0, y0, y1, **kwargs)
         corner = [x0, y1]
     elif (alpha >= 0 and orientation == 'down') \
-    or (alpha < 0 and orientation == 'up'):
+            or (alpha < 0 and orientation == 'up'):
         plt.plot([x0, x1], [y0, y0], 'k')
         plt.plot([x1, x1], [y0, y1], 'k')
         # plt.hlines(y0, x0, x1, **kwargs)
         # plt.vlines(x1, y0, y1, **kwargs)
         corner = [x1, y0]
     else:
-        raise ValueError(r"Need $\alpha\in\mathbb{R} and orientation\in{'up', 'down'}")
+        raise ValueError(r"Need $\alpha\in\mathbb{R} and "
+                         r"orientation\in{'up', 'down'}")
     return corner
+
 
 def draw_power_law_triangle(alpha, x0, width, orientation, base=10,
                             x0_logscale=True, label=None,
-                            label_padding=0.1, text_args={}, **kwargs):
+                            label_padding=0.1, text_args={}, ax=None,
+                            **kwargs):
     """Draw a triangle showing the best-fit power-law on a log-log scale.
 
     Parameters
@@ -130,41 +147,50 @@ def draw_power_law_triangle(alpha, x0, width, orientation, base=10,
         'up' or 'down', control which way the triangle's right angle "points"
     base : float
         scale "width" for non-base 10
+    ax : mpl.axes.Axes, optional
 
     Returns
     -------
     corner : (2,) np.array
-        coordinates of the right-angled corhow to get text outline matplotlibner of the triangle
+        coordinates of the right-angled corhow to get text outline of the
+        triangle
+
     """
     if x0_logscale:
         x0, y0 = [base**x for x in x0]
     else:
         x0, y0 = x0
+    if ax is None:
+        ax = plt.gca()
     x1 = x0*base**width
     y1 = y0*(x1/x0)**alpha
-    plt.plot([x0, x1], [y0, y1], 'k')
+    ax.plot([x0, x1], [y0, y1], 'k')
     if (alpha >= 0 and orientation == 'up') \
-    or (alpha < 0 and orientation == 'down'):
-        plt.plot([x0, x1], [y1, y1], 'k')
-        plt.plot([x0, x0], [y0, y1], 'k')
+            or (alpha < 0 and orientation == 'down'):
+        ax.plot([x0, x1], [y1, y1], 'k')
+        ax.plot([x0, x0], [y0, y1], 'k')
         # plt.plot lines have nice rounded caps
         # plt.hlines(y1, x0, x1, **kwargs)
         # plt.vlines(x0, y0, y1, **kwargs)
         corner = [x0, y1]
     elif (alpha >= 0 and orientation == 'down') \
-    or (alpha < 0 and orientation == 'up'):
-        plt.plot([x0, x1], [y0, y0], 'k')
-        plt.plot([x1, x1], [y0, y1], 'k')
+            or (alpha < 0 and orientation == 'up'):
+        ax.plot([x0, x1], [y0, y0], 'k')
+        ax.plot([x1, x1], [y0, y1], 'k')
         # plt.hlines(y0, x0, x1, **kwargs)
         # plt.vlines(x1, y0, y1, **kwargs)
         corner = [x1, y0]
     else:
-        raise ValueError(r"Need $\alpha\in\mathbb{R} and orientation\in{'up', 'down'}")
+        raise ValueError(r"Need $\alpha\in\mathbb{R} and orientation\in{'up', "
+                         r"'down'}")
     if label is not None:
         xlabel = x0*base**(width/2)
-        ylabel = y1*base**label_padding if orientation == 'up' else y0*base**(-label_padding)
-        plt.text(xlabel, ylabel, label, horizontalalignment='center',
-                 verticalalignment='center', **text_args)
+        if orientation == 'up':
+            ylabel = y1*base**label_padding
+        else:
+            ylabel = y0*base**(-label_padding)
+        ax.text(xlabel, ylabel, label, horizontalalignment='center',
+                verticalalignment='center', **text_args)
     return corner
 
 
@@ -175,8 +201,9 @@ def set_ax_size(w, h, ax=None):
     is under user control.
 
     w, h: width, height in inches """
-    if not ax: ax=plt.gca()
-    l = ax.figure.subplotpars.left
+    if not ax:
+        ax = plt.gca()
+    l = ax.figure.subplotpars.left  # NOQA
     r = ax.figure.subplotpars.right
     t = ax.figure.subplotpars.top
     b = ax.figure.subplotpars.bottom
@@ -185,10 +212,76 @@ def set_ax_size(w, h, ax=None):
     ax.figure.set_size_inches(figw, figh)
 
 
-import numbers
-import io
+# there's quite a fight over whether ndarray should be a
+# "collections.abc.Sequence" (https://github.com/numpy/numpy/issues/2776), so
+# instead we check the attrs we want ourselves
+def _has_len_get_item(x):
+    return hasattr(x, '__len__') and hasattr(x, '__getitem__')
+
+
+def _ensure_seq(arg, N, unit_type=None, name=None, match_name=None):
+    """
+    Encapsulate the logic for tiling an input parameter.
+
+    Parameters
+    ----------
+    arg : unit_type or list thereof
+        The input argument you want to ensure is a list.
+    N : int
+        The length the output list should match
+    unit_type : type
+        The type of the input argument (if it's not a list, or the type of each
+        element of the output list).
+    name : str, optional
+        The name of the argument, for error messages. If ``None``, the argument
+        will be str'd.
+    match_name : str, optional
+        The name of the parameter whose length *arg* is intended to match. If
+        ``None``, the desired length itself will be printed.
+
+    Returns
+    -------
+    list of unit_type
+        The input parameter, now guaranteed to be a list of length *N*.
+
+    """
+    if name is None:
+        name = arg
+    if match_name is None:
+        match_name = f' be {N}.'
+    else:
+        match_name = ' match {match_name}.'
+
+    # a nested unit_type
+    nested_sequence = (
+        unit_type is not None
+        and isinstance(arg, unit_type)
+        and _has_len_get_item(unit_type)
+        and isinstance(arg[0], unit_type)
+    )
+    # the unit type is itself a sequence, but not nested
+    unit_is_seq = (
+        unit_type is not None
+        and isinstance(arg, unit_type)
+        and _has_len_get_item(unit_type)
+        and not isinstance(arg[0], unit_type)
+    )
+    # if the input is already tiled, verify its length
+    if nested_sequence or (not unit_is_seq and _has_len_get_item(arg)):
+        if N != len(arg):
+            raise ValueError(f"length of {name} should {match_name}.")
+    # otherwise, if we've been given a type, make sure it matches
+    elif unit_type is not None and not isinstance(arg, unit_type):
+        raise ValueError(f"{name} should be a {unit_type} or list thereof.")
+    # otherwise, we have a single instance of the desired input, tile it
+    else:
+        arg = N*[arg]
+    return np.array(arg)
+
+
 def make_at_aspect(plot_funcs, heights, col_width,  tight_width='bbox',
-                   hspace=None, halign=None, is_ratio=True, **kw_figs):
+                   hspace=None, halign='min_axis_width', is_ratio=True,
+                   **kw_figs):
     """Figure with fixed column width and requested aspect ratios per subplot.
 
     Parameters
@@ -227,65 +320,54 @@ def make_at_aspect(plot_funcs, heights, col_width,  tight_width='bbox',
 
     Notes
     -----
-    No extra "axes_kw" argument is provided, since each axis is passed to it's appropriate
-    plot_func, which should be able to set any relevant extra parameters for that axis.
+    No extra "axes_kw" argument is provided, since each axis is passed to it's
+    appropriate plot_func, which should be able to set any relevant extra
+    parameters for that axis.
+
     """
     n_plots = len(plot_funcs)
-    if halign is None:
-        halign = n_plots * ['min_axis_width']
-    try:
-        if n_plots != len(heights):
-            raise ValueError("length of heights and plot_funcs should match")
-    except TypeError: # no __len__
-        if not isinstance(heights, numbers.Number):
-            raise ValueError("heights should be list of ratios or single float")
-        # we have a single number, simply tile it accordingly
-        heights = n_plots*[heights]
-    heights = np.array(heights)
-    # also tile is_ratio if needed
-    if isinstance(is_ratio, bool):
-        is_ratio = n_plots*[is_ratio]
-    is_ratio = np.array(is_ratio)
-
+    halign = _ensure_seq(halign, n_plots, str, 'halign', 'plot_funcs')
+    heights = _ensure_seq(heights, n_plots, numbers.Number,
+                          'heights', 'plot_funcs')
+    is_ratio = _ensure_seq(is_ratio, n_plots, bool, 'is_ratio', 'plot_funcs')
     # first make "test" figure to get correct extents including all labels, etc
-    # leave a 2x margin of error for the labels to fit into vertically.
+    # leave a 2x margin of error for the labels, etc. to fit into vertically.
     max_heights = heights.copy()
     max_heights[is_ratio] = heights[is_ratio]*col_width
     test_fig_height = 2*np.sum(max_heights)
-    fig, axs = plt.subplots(nrows=n_plots, figsize=(col_width, test_fig_height), **kw_figs)
+    fig, axs = plt.subplots(nrows=n_plots,
+                            figsize=(col_width, test_fig_height),
+                            **kw_figs)
     if n_plots == 1:
-        axs = [axs] # not sure why the inconsistency in subplots interface...
+        axs = [axs]  # not sure why the inconsistency in subplots interface...
     for i in range(n_plots):
         plot_funcs[i](axs[i])
 
-    # "dry-run" a figure save to get "real" bbox for full figure with all children
+    # "dry-run" a figure save to get "real" bbox for full figure with all
+    # children
+    fake_file = io.StringIO()
     fig.canvas = backend_svg.FigureCanvasSVG(fig)
-    preprint = fig.canvas.print_svg(io.BytesIO(), dpi=300, facecolor=[1,1,1], edgecolor=[0,0,0],
-                          orientation='portrait', dryrun=True)
-    #TODO: which is right? neither seem exactly right according to inkscape?
-    # if we use fig.canvas.renderer instead, we get different answers o.o
-    renderer = fig._cachedRenderer
+    renderer = backend_svg.RendererSVG(col_width, test_fig_height, fake_file)
+    _ = fig.draw(renderer)
+
     disp_to_inch = fig.dpi_scale_trans.inverted()
     fig_to_inch = fig.dpi_scale_trans.inverted() + fig.transFigure
 
-    # now get extents of axes themselves and axis "bbox"s (i.e. including labels, etc)
+    # now get extents of axes themselves and axis "bbox"s (i.e. including
+    # labels, etc)
     ax_bbox_inches = []
     ax_inches = []
     for ax in axs:
-        ax_bbox = ax.get_tightbbox(renderer) # docs say in "figure pixels", but means "display"
+        # get_tightbbox docs say in "figure pixels", but means "display"
+        ax_bbox = ax.get_tightbbox(renderer)
         ax_bbox_inches.append(disp_to_inch.transform(ax_bbox))
         ax_inches.append(fig_to_inch.transform(ax.get_position()))
-    x0s, y0s, x1s, y1s = map(np.array, zip(*map(np.ndarray.flatten, ax_bbox_inches)))
-    ax0s, ay0s, ax1s, ay1s = map(np.array, zip(*map(np.ndarray.flatten, ax_inches)))
-
-    # get final horizontal size of figure
-    if tight_width == 'bbox':
-        bbox_inches = fig.get_tightbbox(renderer).bounds
-        real_h_extents = [bbox_inches[0], bbox_inches[2]]
-        real_v_extents = [bbox_inches[1], bbox_inches[3]]
-    elif tight_width == 'tight':
-        real_h_extents = [np.min(x0s), np.max(x1s)]
-        real_v_extents = [np.min(y0s), np.max(y1s)]
+    x0s, y0s, x1s, y1s = map(np.array, zip(
+        *map(np.ndarray.flatten, ax_bbox_inches)
+    ))
+    ax0s, ay0s, ax1s, ay1s = map(np.array, zip(
+        *map(np.ndarray.flatten, ax_inches)
+    ))
 
     # calculate space required in addition to axes themselves
     pads_left = ax0s - x0s
@@ -307,7 +389,7 @@ def make_at_aspect(plot_funcs, heights, col_width,  tight_width='bbox',
             x1[i] = col_width - max_pad_right
         else:
             raise ValueError(f"Invalid option passed for halign: {halign[i]}. "
-                              "Should be 'full' or 'min_axis_width'")
+                             f"Should be 'full' or 'min_axis_width'")
     real_heights = heights.copy()
     real_heights[is_ratio] = heights[is_ratio]*(x1 - x0)[is_ratio]
     if hspace is None:
@@ -316,9 +398,9 @@ def make_at_aspect(plot_funcs, heights, col_width,  tight_width='bbox',
 
     # make new figure with axes "correctly" located
     total_height = np.sum(real_heights) + np.sum(pads_below) \
-            + np.sum(pads_above) + (n_plots - 1)*hspace
+        + np.sum(pads_above) + (n_plots - 1)*hspace
     fig = plt.figure(figsize=(col_width, total_height), **kw_figs)
-    cur_y = 1 # track y pos normalized to height of figure
+    cur_y = 1  # track y pos normalized to height of figure
     for i in range(n_plots):
         left = x0[i]/col_width
         right = x1[i]/col_width
@@ -328,9 +410,10 @@ def make_at_aspect(plot_funcs, heights, col_width,  tight_width='bbox',
         bottom = cur_y
         cur_y -= pads_below[i]/total_height
         cur_y -= hspace/total_height
-        #TODO if right - left < 0, or top - bottom < 0, complain that an
-        # annotation that has been requested doesn't fit in the column
-        # absolutely
-        ax = fig.add_axes([left, bottom, right - left, top-bottom])
+        if right < left or top < bottom:
+            raise RuntimeError(f"Annoations requested for plot in {i}th Axes "
+                               "take up so much space that there's no room "
+                               "left for the Axes!")
+        ax = fig.add_axes([left, bottom, right - left, top - bottom])
         plot_funcs[i](ax)
     return fig, real_heights
