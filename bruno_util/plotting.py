@@ -8,6 +8,63 @@ import io
 import numbers
 
 
+bpj_template_linewidth = 3.132
+half_width_figure_ratio = 3/4
+golden_ratio = (1 + np.sqrt(5))/2
+full_width_figure_ratio = 1/golden_ratio
+
+
+def use_cell_style(rcParams=None):
+    """
+    Follow Cell Press Digital Image Guidelines.
+
+    See `their webpage
+    <https://www.cell.com/figureguidelines>`_ for more details.
+    """
+    if rcParams is None:
+        rcParams = mpl.rcParams
+    # text should be about 6–8 pt at the desired print size
+    rcParams['xtick.labelsize'] = 6
+    rcParams['ytick.labelsize'] = 6
+    rcParams['axes.titlesize'] = 8
+    rcParams['axes.labelsize'] = 7
+    rcParams['legend.fontsize'] = 7
+    rcParams['text.usetex'] = False
+    rcParams['font.sans-serif'] = 'Arial'
+    rcParams['font.family'] = 'sans-serif'
+    rcParams['figure.figsize'] = (
+        bpj_template_linewidth,
+        half_width_figure_ratio * bpj_template_linewidth
+    )
+    figure_size = {
+        'two-by-half column, three legend entries above': (
+            # using 3:4 Axes aspect ratio
+            bpj_template_linewidth, 1.668346712646744
+        ),
+        'full column, three legend entries above': (
+            # using 1:golden_ratio aspect ratio
+            bpj_template_linewidth, 2.5860977029744037
+        ),
+        'full column, four legend entries above': (
+            # using 1:golden_ratio aspect ratio
+            bpj_template_linewidth, 2.7138292533549935
+        )
+    }
+    return figure_size
+
+
+def fig_height_given_axes_aspect(fig, ax, desired_aspect_ratio=1/golden_ratio):
+    """Workaround Matplotlib setting figure, not Axes, aspect ratio."""
+    figwidth = fig.get_figwidth()
+    figheight = fig.get_figheight()
+    ax_bbox = ax.get_position()
+    ax_width = ax_bbox.width*figwidth
+    ax_height = ax_bbox.height*figheight
+
+    ax_height_desired = ax_width*desired_aspect_ratio
+    return figheight + (ax_height_desired - ax_height)
+
+
 def print_bbox_from_arr(bbox):
     print(f'Bbox(xmin={bbox[0, 0]}, xmax={bbox[1, 0]},\n'
           f'     ymin={bbox[0, 1]}, ymax={bbox[1, 1]}')
