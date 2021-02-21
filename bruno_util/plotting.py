@@ -41,6 +41,14 @@ def use_cell_style(rcParams=None):
             # using 3:4 Axes aspect ratio
             bpj_template_linewidth, 1.668346712646744
         ),
+        'two-by-half column, four legend entries above': (
+            # using 3:4 Axes aspect ratio
+            bpj_template_linewidth, 1.8093177076747775
+        ),
+        'full column': (
+            # using 1:golden_ratio aspect ratio
+            bpj_template_linewidth, 1.9955783784046215
+        ),
         'full column, three legend entries above': (
             # using 1:golden_ratio aspect ratio
             bpj_template_linewidth, 2.5860977029744037
