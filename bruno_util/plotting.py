@@ -29,9 +29,11 @@ def use_cell_style(rcParams=None):
     rcParams['axes.titlesize'] = 8
     rcParams['axes.labelsize'] = 7
     rcParams['legend.fontsize'] = 7
+    rcParams['legend.title_fontsize'] = 7
     rcParams['text.usetex'] = False
     rcParams['font.sans-serif'] = 'Arial'
-    rcParams['font.family'] = 'sans-serif'
+    rcParams['font.family'] = 'Arial'
+    rcParams['figure.dpi'] = 600
     rcParams['figure.figsize'] = (
         bpj_template_linewidth,
         half_width_figure_ratio * bpj_template_linewidth
